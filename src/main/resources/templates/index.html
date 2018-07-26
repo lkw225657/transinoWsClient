@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>web-service-client</title>
+    <!-- Bootstrap Core CSS -->
+    <!--<link th:href="@{/bootstrap/css/bootstrap-combined.min.css}" rel="stylesheet">-->
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/bootstrap-table.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-7">
+            <div class="page-header">
+                <h1>
+                    信贷业务系统
+                    <small>WebService</small>
+                </h1>
+            </div>
+        </div>
+        <div id="alert" class="col-xs-5"></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="tabbable" id="tabs-159366">
+                <ul class="nav nav-tabs">
+                    <li class="">
+                        <a href="#panel-1" data-toggle="tab">服务器配置</a>
+                    </li>
+                    <li class="active">
+                        <a href="#panel-311" data-toggle="tab">电票质押申请</a>
+                    </li>
+                    <li>
+                        <a href="#panel-312" data-toggle="tab">电票开票申请</a>
+                    </li>
+                    <li>
+                        <a href="#panel-313" data-toggle="tab">贴现业务申请</a>
+                    </li>
+                    <li>
+                        <a href="#panel-33" data-toggle="tab">质押签收</a>
+                    </li>
+                    <li>
+                        <a href="#panel-34" data-toggle="tab">票据承兑签收</a>
+                    </li>
+                    <li>
+                        <a href="#panel-35" data-toggle="tab">贴现签收</a>
+                    </li>
+                    <li>
+                        <a href="#panel-36" data-toggle="tab">质押解除签收</a>
+                    </li>
+                    <li>
+                        <a href="#panel-37" data-toggle="tab">退票申请</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="panel-1">
+                        <div class="row" style="margin-top: 20px; !important">
+                        <div class="col-xs-9 form-group">
+                            <label>applyElecBillTradeWs</label>
+                            <input id="wsdlLocation" name="wsdlLocation" type="text" class="form-control" th:value="${wsdlLocation}"/>
+                        </div>
+                        <div class="col-xs-9 form-group">
+                            <label>notifyElecBillStatusWs</label>
+                            <input id="wsdlLocation2" name="wsdlLocation2" type="text" class="form-control" th:value="${wsdlLocation2}"/>
+                        </div>
+                        <div class="col-xs-9 form-group">
+                            <div id="serverSet" class="btn btn-default" onclick="serverSet()">设定</div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane active" id="panel-311">
+
+                    </div>
+                    <div class="tab-pane" id="panel-312">
+
+                    </div>
+                    <div class="tab-pane" id="panel-313">
+
+                    </div>
+                    <div class="tab-pane" id="panel-33">
+
+                    </div>
+                    <div class="tab-pane" id="panel-34">
+
+                    </div>
+                    <div class="tab-pane" id="panel-35">
+
+                    </div>
+                    <div class="tab-pane" id="panel-36">
+
+                    </div>
+                    <div class="tab-pane" id="panel-37">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px; !important">
+        <div class="col-xs-12">
+            <form id="ajaxPostForm">
+                <div class="row">
+                    <div id="data">
+
+                    </div>
+                    <div class="col-xs-3">
+                        <legend>提交信息</legend>
+                        <div class="form-group"><label>批次号</label><input id="batchNo" name="batchNo" type="text" class="form-control" value=""/>
+                        </div><div class="form-group"><label>业务代码</label><input id="bizCode" name="bizCode" type="text" class="form-control" value="5204"/></div>
+                        <legend>返回信息</legend>
+                        <div class="form-group"><label>业务返回结果代码</label><input id="retCode" type="text" class="form-control" readonly/>
+                        </div><div class="form-group"><label>返回信息描述</label><input id="retMsg" type="text" class="form-control" readonly/>
+                        </div><div class="form-group"><label>业务代码</label><input id="txID" type="text" class="form-control" readonly/></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/js/jquery-3.3.1.js}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap-table.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap-table-zh-CN.js}"></script>
+<script>
+    $.fn.serializeObject = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+    function ajaxPostForm(url) {
+        var fromStr = $("#ajaxPostForm").serializeObject();
+        ajaxPost(url, fromStr);
+    }
+    function ajaxPost(url, param) {
+        $.ajax({
+            type: "post",
+            url: url,
+            contentType: "application/json;charset=utf-8",
+            data: JSON.stringify(param),
+            dataType: "json",
+            success: function (data) {
+                $("#retCode").val(data.head.resCode);
+                $("#retMsg").val(data.head.resMsg);
+                $("#txID").val(data.head.bizCode);
+                console.log(data.head.bizCode);
+                console.log(data.head.resCode);
+                console.log(data.head.resMsg);
+            },
+            error: function (ret, status, error) {
+                console.log(ret.readyState);
+                console.log(status);
+                console.log(error);
+            }
+        });
+    }
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        $("#retCode").val("");
+        $("#retMsg").val("");
+        $("#txID").val("");
+        var activeTab = e.target.hash;
+        switch (activeTab){
+            case "#panel-1":
+                $("#bizCode").val("5204");
+                $('#data').html('');
+                break;
+            case "#panel-311":
+                $("#bizCode").val("5204");
+                initApplyDiscount1();
+                break;
+            case "#panel-312":
+                $("#bizCode").val("5205");
+                initApplyDiscount2();
+                break;
+            case "#panel-313":
+                $("#bizCode").val("5206");
+                initApplyDiscount3();
+                break;
+            case "#panel-33":
+                $("#bizCode").val("5207");
+                initAccountPush("10");
+                initTable("10");
+                break;
+            case "#panel-34":
+                $("#bizCode").val("5208");
+                initAccountPush("20");
+                initTable("20");
+                break;
+            case "#panel-35":
+                $("#bizCode").val("5209");
+                initAccountPush("30");
+                initTable("30");
+                break;
+            case "#panel-36":
+                $("#bizCode").val("5210");
+                initAccountPush("10");
+                initTable("10");
+                break;
+            case "#panel-37":
+                $("#bizCode").val("5211");
+                initAccountPush("20");
+                initTable("20");
+                break;
+        }
+
+    });
+    initApplyDiscount1();
+    function initApplyDiscount1() {
+        var html = '<div class="col-xs-4">\
+            <fieldset>\
+            <div class="form-group"><label>票据总张数</label><input id="elecCount" name="elecCount" type="text" class="form-control" value="1"/>\
+            </div><div class="form-group"><label>交易流水号</label><input id="elecBatchId" name="elecBatchId" type="text" class="form-control" value="5204"/>\
+            </div><div class="form-group"><label>电票票据id</label><input id="elecId" name="elecId" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>票据号</label><input id="accepNo" name="accepNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出质人名称</label><input id="payeeName" name="payeeName" type="text" class="form-control" value="出质人名称"/>\
+            </div><div class="form-group"><label>出质人行号</label><input id="payeeBankNo" name="payeeBankNo" type="text" class="form-control" value="5204-5204"/>\
+            </div><div class="form-group"><label>出质人账号</label><input id="payeeAccounts" name="payeeAccounts" type="text" class="form-control" value="5204--5204"/>\
+            </div></fieldset>\
+            </div>\
+            <div class="col-xs-5">\
+            <fieldset>\
+            <div class="form-group"><label>出质人银行名称</label><input id="payeeBankName" name="payeeBankName" type="text" class="form-control" value="出质人银行名称"/>\
+            </div><div class="form-group"><label>币种</label><input id="accepCurrType" name="accepCurrType" type="text" class="form-control" value="CNY"/>\
+            </div><div class="form-group"><label>票面金额</label><input id="accepAmount" name="accepAmount" type="text" class="form-control" value="40000.0"/>\
+            </div><div class="form-group"><label>承兑日期</label><input id="issueDate" name="issueDate" type="text" class="form-control" value="2018-06-30"/>\
+            </div><div class="form-group"><label>到期日</label><input id="dueDate" name="dueDate" type="text" class="form-control" value="2018-07-30"/>\
+            </div><div class="form-group"><label>业务模式</label><input id="tradeType" name="tradeType" type="text" class="form-control" value="10"/>\
+            </div><div class="form-group"><label>申请日期</label><input id="appDate" name="appDate" type="text" class="form-control" value="2018-05-30"/>\
+            </div><label> </label>\
+            <div id="ajaxPost" class="btn btn-default" onclick="ajaxPostForm(\'/applyElec\')">提交</div>\
+            </fieldset>\
+            </fieldset>\
+            </div>';
+        $('#data').html(html);
+    }
+    function initApplyDiscount2() {
+        var html = '<div class="col-xs-3">\
+            <fieldset>\
+            <div class="form-group"><label>票据总张数</label><input id="elecCount" name="elecCount" type="text" class="form-control" value="1"/>\
+            </div><div class="form-group"><label>票据总金额</label><input id="elecSum" name="elecSum" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>交易流水号</label><input id="elecBatchId" name="elecBatchId" type="text" class="form-control" value="5205"/>\
+            </div><div class="form-group"><label>电票票据id</label><input id="elecId" name="elecId" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>票号</label><input id="accepNo" name="accepNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>票据介质类型</label><input id="accepDielType" name="accepDielType" type="text" class="form-control" value="1"/>\
+            </div><div class="form-group"><label>财务公司票据</label><input id="bown" name="bown" type="text" class="form-control" value="2"/>\
+            </div><div class="form-group"><label>币种</label><input id="accepCurrType" name="accepCurrType" type="text" class="form-control" value="CNY"/>\
+            </div></fieldset>\
+            </div>\
+            <div class="col-xs-3">\
+            <fieldset>\
+            <div class="form-group"><label>票面金额</label><input id="accepAmount" name="accepAmount" type="text" class="form-control" value="50000.0"/>\
+			</div><div class="form-group"><label>承兑日期</label><input id="issueDate" name="issueDate" type="text" class="form-control" value="2018-07-20"/>\
+            </div><div class="form-group"><label>到期日</label><input id="dueDate" name="dueDate" type="text" class="form-control" value="2018-08-20"/>\
+            </div><div class="form-group"><label>付款行行号</label><input id="draweeNo" name="draweeNo" type="text" class="form-control" value="5205-5205"/>\
+            </div><div class="form-group"><label>付款行全称</label><input id="draweeName" name="draweeName" type="text" class="form-control" value="付款行全称"/>\
+            </div><div class="form-group"><label>付款行地址</label><input id="draweeAddress" name="draweeAddress" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人证件类型</label><input id="drawerIdType" name="drawerIdType" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人证件号码</label><input id="drawerIdNo" name="drawerIdNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人客户号</label><input id="drawerCusId" name="drawerCusId" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人姓名</label><input id="drawerName" name="drawerName" type="text" class="form-control" value="出票人姓名"/>\
+            </div><div class="form-group"><label>出票人账号</label><input id="drawerAccount" name="drawerAccount" type="text" class="form-control" value="5205-5205"/>\
+            </div></fieldset>\
+			</div>\
+            <div class="col-xs-3">\
+            <div class="form-group"><label>收款银行号</label><input id="payeeBankNo" name="payeeBankNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收款银行名</label><input id="payeeBankName" name="payeeBankName" type="text" class="form-control" value="收款银行名"/>\
+            </div><div class="form-group"><label>收款行地址</label><input id="payeeBankAddress" name="payeeBankAddress" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人证件类型</label><input id="payeeIdType" name="payeeIdType" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人证件号码</label><input id="payeeIdNo" name="payeeIdNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人客户号</label><input id="payeeCusId" name="payeeCusId" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人姓名</label><input id="payeeName" name="payeeName" type="text" class="form-control" value="收票人姓名"/>\
+            </div><div class="form-group"><label>收票人账号</label><input id="payeeAccount" name="payeeAccount" type="text" class="form-control" value="5205--5205"/>\
+            </div><div class="form-group"><label>业务模式</label><input id="tradeType" name="tradeType" type="text" class="form-control" value="20"/>\
+            </div><div class="form-group"><label>申请日期</label><input id="appDate" name="appDate" type="text" class="form-control" value="2018-06-20"/>\
+            </div><div class="form-group"><label> </label>\
+            <div id="ajaxPost" class="btn btn-default" onclick="ajaxPostForm(\'/applyElec\')">提交</div></div>\
+            <fieldset>\
+            </fieldset>\
+            </div>';
+        $('#data').html(html);
+    }
+    function initApplyDiscount3() {
+        var html = '<div class="col-xs-3">\
+            <fieldset>\
+            <div class="form-group"><label>贴现率</label><input id="discIr" name="discIr" type="text" class="form-control" value="1.3"/>\
+            </div><div class="form-group"><label>贴现到期日期</label><input id="discDate" name="discDate" type="text" class="form-control" value="2018-08-10"/>\
+            </div><div class="form-group"><label>在途天数</label><input id="inWayDays" name="inWayDays" type="text" class="form-control" />\
+            </div><div class="form-group"><label>票据总张数</label><input id="elecCount" name="elecCount" type="text" class="form-control" value="1"/>\
+            </div><div class="form-group"><label>票据总金额</label><input id="elecSum" name="elecSum" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>交易流水号</label><input id="elecBatchId" name="elecBatchId" type="text" class="form-control" value="5206"/>\
+            </div><div class="form-group"><label>电票票据id</label><input id="elecId" name="elecId" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>票号</label><input id="accepNo" name="accepNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>票据介质类型</label><input id="accepDielType" name="accepDielType" type="text" class="form-control" value="1"/>\
+            </div><div class="form-group"><label>财务公司票据</label><input id="bown" name="bown" type="text" class="form-control" value="2"/>\
+            </div><div class="form-group"><label>币种</label><input id="accepCurrType" name="accepCurrType" type="text" class="form-control" value="CNY"/>\
+            </div></fieldset>\
+            </div>\
+            <div class="col-xs-3">\
+            <fieldset>\
+            <div class="form-group"><label>票面金额</label><input id="accepAmount" name="accepAmount" type="text" class="form-control" value="60000.0"/>\
+            </div><div class="form-group"><label>承兑日期</label><input id="issueDate" name="issueDate" type="text" class="form-control" value="2018-07-10"/>\
+            </div><div class="form-group"><label>到期日</label><input id="dueDate" name="dueDate" type="text" class="form-control" value="2018-08-10"/>\
+            </div><div class="form-group"><label>付款行行号</label><input id="draweeNo" name="draweeNo" type="text" class="form-control" value="5206-5206"/>\
+            </div><div class="form-group"><label>付款行全称</label><input id="draweeName" name="draweeName" type="text" class="form-control" value="付款行全称"/>\
+            </div><div class="form-group"><label>付款行地址</label><input id="draweeAddress" name="draweeAddress" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人证件类型</label><input id="drawerIdType" name="drawerIdType" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人证件号码</label><input id="drawerIdNo" name="drawerIdNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人客户号</label><input id="drawerCusId" name="drawerCusId" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>出票人姓名</label><input id="drawerName" name="drawerName" type="text" class="form-control" value="出票人姓名"/>\
+            </div><div class="form-group"><label>出票人账号</label><input id="drawerAccount" name="drawerAccount" type="text" class="form-control" value="5206-5206"/>\
+            </div></fieldset>\
+			</div>\
+			<div class="col-xs-3">\
+            <fieldset>\
+			<div class="form-group"><label>收款银行号</label><input id="payeeBankNo" name="payeeBankNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收款银行名</label><input id="payeeBankName" name="payeeBankName" type="text" class="form-control" value="收款银行名"/>\
+            </div><div class="form-group"><label>收款行地址</label><input id="payeeBankAddress" name="payeeBankAddress" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人证件类型</label><input id="payeeIdType" name="payeeIdType" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人证件号码</label><input id="payeeIdNo" name="payeeIdNo" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人客户号</label><input id="payeeCusId" name="payeeCusId" type="text" class="form-control" value=""/>\
+            </div><div class="form-group"><label>收票人姓名</label><input id="payeeName" name="payeeName" type="text" class="form-control" value="收票人姓名"/>\
+            </div><div class="form-group"><label>收票人账号</label><input id="payeeAccount" name="payeeAccount" type="text" class="form-control" value="5206--5206"/>\
+            </div><div class="form-group"><label>业务模式</label><input id="tradeType" name="tradeType" type="text" class="form-control" value="30"/>\
+            </div><div class="form-group"><label>申请日期</label><input id="appDate" name="appDate" type="text" class="form-control" value="2018-06-10"/>\
+            </div><div class="form-group"><label> </label>\
+            <div id="ajaxPost" class="btn btn-default" onclick="ajaxPostForm(\'/applyElec\')">提交</div></div>\
+            </fieldset>\
+            </div>';
+        $('#data').html(html);
+    }
+    function initAccountPush() {
+        var html='<div class="col-xs-9">\
+            <div id="toolbar">\
+            <button type="button" id="do" class="btn btn-default btn-sm">\
+            <span class="glyphicon glyphicon-play-circle"></span> 提交\
+            </button>\
+            </div>\
+            <table id="table"></table>\
+            </div>';
+        $('#data').html(html);
+    }
+
+    function initTable(type) {
+
+        $("#table").bootstrapTable({ // 对应table标签的id
+            url: "/extElecAccep", // 获取表格数据的url
+            method: 'POST',
+            toolbar: '#toolbar',              //工具按钮用哪个容器
+            cache: false, // 设置为 false 禁用 AJAX 数据缓存， 默认为true
+            striped: true,  //表格显示条纹，默认为false
+            pagination: true, // 在表格底部显示分页组件，默认false
+            pageList: [10, 20], // 设置页面可以显示的数据条数
+            pageSize: 10, // 页面数据条数
+            pageNumber: 1, // 首页页码
+            clickToSelect: true,
+            sidePagination: 'server', // 设置为服务器端分页
+            contentType : 'application/json;charset=UTF-8',
+            queryParams: function (params) { // 请求服务器数据时发送的参数，可以在这里添加额外的查询参数，返回false则终止请求
+
+                return JSON.stringify({
+                    pageSize: params.limit, // 每页要显示的数据条数
+                    offset: params.offset, // 每页显示数据的开始行号
+                    sort: params.sort, // 要排序的字段
+                    sortOrder: params.order, // 排序规则
+                    tradeType: type // 额外添加的参数
+                });
+            },
+            sortName: 'CREATED_DATE', // 要排序的字段
+            sortOrder: 'desc', // 排序规则
+            showRefresh: true,                  //是否显示刷新按钮
+            columns: [
+                {
+                    checkbox: true, // 显示一个勾选框
+                    align: 'center' // 居中显示
+                }, {
+                    field: 'elecBatchId', // 返回json数据中的name
+                    title: '流水号', // 表格表头显示文字
+                    align: 'center', // 左右居中
+                    valign: 'middle' // 上下居中
+                }, {
+                    field: 'elecId',
+                    title: '票据id',
+                    align: 'center',
+                    valign: 'middle'
+                }, {
+                    field: 'accepNo',
+                    title: '票号',
+                    align: 'center',
+                    valign: 'middle'
+                }, {
+                    field: 'appDate',
+                    title: '申请日',
+                    align: 'center',
+                    valign: 'middle',
+                    formatter: function (val){ // 单元格格式化函数
+                        var date = new Date(val);
+                        var text = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+                        return text;
+                    }
+                }, {
+                    field: 'accepAmount',
+                    title: '金额',
+                    align: 'center',
+                    valign: 'middle'
+                }, {
+                    field: 'bizCode',
+                    title: '业务号',
+                    align: 'center',
+                    valign: 'middle',
+                    formatter: function (value){ // 单元格格式化函数
+                        var text = $('#bizCode').val();
+                        return text;
+                    }
+                }
+            ],
+            onLoadSuccess: function(){  //加载成功时执行
+                console.info("加载成功");
+            },
+            onLoadError: function(){  //加载失败时执行
+                console.info("加载数据失败");
+            }
+
+        });
+        $("#do").click(function(){
+            var data;
+            var rows = $("#table").bootstrapTable('getSelections');
+            if (rows.length == 0){
+                alertShow("没有选中的数据！");
+                return;
+            }
+            var id = rows[0].elecBatchId;
+            var dataAry=[];
+            for (var i = 0; i < rows.length; i++) {
+                if (id != rows[i].elecBatchId){
+                    alertShow('请选择相同的流水号！');
+                    return;
+                }
+                var date = new Date(rows[i].appDate);
+                var month = (date.getMonth() + 1);
+                if (month < 10){
+                    month = '0' + month;
+                }
+                var day = date.getDate();
+                if (day < 10){
+                    day = '0' + day;
+                }
+                var text = date.getFullYear() + '-' + month + '-' + day;
+                data ={
+                    elecBatchId: rows[i].elecBatchId,
+                    elecId:rows[i].elecId,
+                    accepNo:rows[i].accepNo,
+                    appDate:text,
+                    accepAmount:rows[i].accepAmount,
+                    bizCode:$('#bizCode').val()
+                };
+                dataAry.push(data);
+            }
+
+            ajaxPost('/notifyElecList', dataAry);
+        });
+    }
+
+    function alertShow(msg) {
+        $("#alert").html('<div id="myAlert" class="alert alert-warning" role="alert">\
+            <a href="#" class="close" data-dismiss="alert">&times;</a>\
+            <strong>警告！</strong>' + msg + '\
+        </div>');
+    }
+
+    function serverSet() {
+        ajaxPost('/serverSet',{wsdlLocation:$('#wsdlLocation').val()})
+    }
+
+</script>
+</body>
+
+</html>

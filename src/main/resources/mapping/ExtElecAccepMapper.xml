@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.transino.lms.web.mapper.ExtElecAccepMapper">
+    <resultMap id="extElecAccepResultMap" type="net.transino.lms.web.entity.ExtElecAccep">
+        <id column="AID" jdbcType="VARCHAR" property="aid"/>
+        <result column="ELEC_BATCH_ID" jdbcType="VARCHAR" property="elecBatchId"/>
+        <result column="ELEC_ID" jdbcType="VARCHAR" property="elecId"/>
+        <result column="ACCEP_NO" jdbcType="VARCHAR" property="accepNo"/>
+        <result column="BOWN" jdbcType="CHAR" property="bown"/>
+        <result column="ACCEP_CURR_TYPE" jdbcType="CHAR" property="accepCurrType"/>
+        <result column="ACCEP_AMOUNT" jdbcType="DOUBLE" property="accepAmount"/>
+        <result column="ISSUE_DATE" jdbcType="TIMESTAMP" property="issueDate"/>
+        <result column="DUE_DATE" jdbcType="TIMESTAMP" property="dueDate"/>
+        <result column="DRAWEE_NO" jdbcType="VARCHAR" property="draweeNo"/>
+        <result column="DRAWEE_NAME" jdbcType="VARCHAR" property="draweeName"/>
+        <result column="DRAWEE_ADDRESS" jdbcType="VARCHAR" property="draweeAddress"/>
+        <result column="DRAWER_ID_TYPE" jdbcType="VARCHAR" property="drawerIdType"/>
+        <result column="DRAWER_ID_NO" jdbcType="VARCHAR" property="drawerIdNo"/>
+        <result column="DRAWER_CUS_ID" jdbcType="VARCHAR" property="drawerCusId"/>
+        <result column="DRAWER_NAME" jdbcType="VARCHAR" property="drawerName"/>
+        <result column="DRAWER_ACCOUNT" jdbcType="VARCHAR" property="drawerAccount"/>
+        <result column="PAYEE_BANK_NO" jdbcType="VARCHAR" property="payeeBankNo"/>
+        <result column="PAYEE_BANK_NAME" jdbcType="VARCHAR" property="payeeBankName"/>
+        <result column="PAYEE_BANK_ADDRESS" jdbcType="VARCHAR" property="payeeBankAddress"/>
+        <result column="PAYEE_ID_TYPE" jdbcType="VARCHAR" property="payeeIdType"/>
+        <result column="PAYEE_ID_NO" jdbcType="VARCHAR" property="payeeIdNo"/>
+        <result column="PAYEE_CUS_ID" jdbcType="VARCHAR" property="payeeCusId"/>
+        <result column="PAYEE_NAME" jdbcType="VARCHAR" property="payeeName"/>
+        <result column="PAYEE_ACCOUNT" jdbcType="VARCHAR" property="payeeAccount"/>
+        <result column="TRADE_TYPE" jdbcType="CHAR" property="tradeType"/>
+        <result column="BUSED" jdbcType="CHAR" property="bused"/>
+        <result column="APP_DATE" jdbcType="TIMESTAMP" property="appDate"/>
+        <result column="CREATED_BY" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="CREATED_ORG" jdbcType="VARCHAR" property="createdOrg"/>
+        <result column="CREATED_DATE" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="LAST_MODIFIED_BY" jdbcType="VARCHAR" property="lastModifiedBy"/>
+        <result column="LAST_MODIFIED_ORG" jdbcType="VARCHAR" property="lastModifiedOrg"/>
+        <result column="LAST_MODIFIED_DATE" jdbcType="TIMESTAMP" property="lastModifiedDate"/>
+    </resultMap>
+
+    <sql id="extElecAccepColumnList">
+    AID, ELEC_BATCH_ID, ELEC_ID, ACCEP_NO, BOWN, ACCEP_CURR_TYPE, ACCEP_AMOUNT, ISSUE_DATE,
+    DUE_DATE, DRAWEE_NO, DRAWEE_NAME, DRAWEE_ADDRESS, DRAWER_ID_TYPE, DRAWER_ID_NO, DRAWER_CUS_ID,
+    DRAWER_NAME, DRAWER_ACCOUNT, PAYEE_BANK_NO, PAYEE_BANK_NAME, PAYEE_BANK_ADDRESS,
+    PAYEE_ID_TYPE, PAYEE_ID_NO, PAYEE_CUS_ID, PAYEE_NAME, PAYEE_ACCOUNT, TRADE_TYPE,
+    BUSED, APP_DATE, CREATED_BY, CREATED_ORG, CREATED_DATE, LAST_MODIFIED_BY, LAST_MODIFIED_ORG,
+    LAST_MODIFIED_DATE
+  </sql>
+
+    <sql id="orderByClause">
+        ORDER BY CREATED_DATE DESC,ACCEP_NO
+    </sql>
+
+    <sql id="whereClause">
+        <where>
+            <if test="tradeType != null and tradeType != ''">
+                and trade_type = #{tradeType}
+            </if>
+        </where>
+    </sql>
+
+    <select id="query" parameterType="java.lang.String" resultMap="extElecAccepResultMap">
+        select
+        <include refid="extElecAccepColumnList"/>
+        from EXT_ELEC_ACCEP
+        <include refid="whereClause"/>
+        <include refid="orderByClause"/>
+    </select>
+</mapper>
